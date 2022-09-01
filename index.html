@@ -8,7 +8,7 @@
 </head>
 <body>
     
-    <canvas id="mycanvas" width="710" height="710">
+    <canvas id="mycanvas" width="800" height="800">
         Hola tu navegador no funciona
     </canvas>
 
@@ -24,9 +24,12 @@
         var pause =true;
         var pared = [];
         var tiempo;
-        var ms="00";
-        var s="0";
-        var m="0";
+        var appMSegundos;
+        var appSegundos;
+        var appMinutos;
+        var ms=00;
+        var s=00;
+        var m=00;
         var victoria = false;
         var krabby = new Image();
         var queso = new Image();
@@ -48,37 +51,68 @@
             winMusic.src="win.MP3";
             paint();
         }
+        function startTime(){
+            clearInterval(tiempo);
+            tiempo = setInterval(controlTime,10);
+        }
+
+        function controlTime(){
+            ms++;
+            if(ms<=9){
+                appMSegundos = "0" + ms;
+            }
+            if(ms>9){
+                appMSegundos = ms;
+            }
+            if(ms>99){
+                s++;
+                appSegundos = "0" + s;
+                ms=0;
+                appMSegundos = "0" + 0;
+            }
+
+            if(s<=9){
+                appSegundos = "0" + s;
+            }
+            if(s>9){
+                appSegundos = s;
+            }
+            
+            if(s>59){
+                m++;
+                appMinutos = "0" + m;
+                s=0;
+                appSegundos = 0 + 0;
+            }
+
+            if(m<=9){
+                appMinutos = "0" + m;
+            }
+            if(m>9){
+                appMinutos = m;
+            }
+
+
+            ctx.fillStyle="rgb(255,255,255)";
+            ctx.fillRect(0,0,700,70);
+            ctx.beginPath();
+            ctx.font="30px Arial";
+            ctx.fillStyle="black";
+            ctx.fillText("Time: "+appMinutos+":"+appSegundos+":"+appMSegundos,50,50);
+        }
 
         function paint()
         {
-            window.requestAnimationFrame(paint)
-            ctx.drawImage(back,100,100)
-            ctx.beginPath();
-            //player1.pintar(ctx);
+            window.requestAnimationFrame(paint);
+           
+            
+            ctx.drawImage(back,100,100);
             ctx.drawImage(krabby,player1.x,player1.y);
             ctx.drawImage(queso,quesito.x,quesito.y);
             for(var i=0;i<pared.length;i++){
                 pared[i].pintar(ctx);
             }
-            startTime();
-            if(pause){
-            ctx.beginPath();
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.fillRect(100,100,670,670);
-            ctx.font="30px Arial";
-            ctx.beginPath();
-            ctx.fillStyle="black";
-            ctx.fillText("PAUSE",350,350);
-            ambiente.pause();   
-            speed = 0;
-            stopTime();
-            }else{
-             speed =1;
-             ambiente.play();
-             update();
-
-            }
-
+            //startTime();
             if(victoria){
                 ctx.beginPath();
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
@@ -92,9 +126,21 @@
                 ambiente.currentTime = 0;
                 stopTime();
                 speed=0;
-                direccion='';
+            }else if(pause){
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fillRect(100,100,670,670);
+                ctx.font="30px Arial";
+                ctx.beginPath();
+                ctx.fillStyle="black";
+                ctx.fillText("PAUSE",350,350);
+                ambiente.pause();   
+                speed = 0;
+                stopTime();
             }else{
+                speed=1;
                 update();
+                controlTime();
             }
             
         }
@@ -167,7 +213,7 @@
                
         })
         function update(){
-            
+            ambiente.play();
             if(direccion == 'up'){
                 player1.y-=speed;
                 if(player1.y<=100){
@@ -232,31 +278,11 @@
             }
 
         }
-
-        function startTime(){
-            clearInterval(tiempo);
-            tiempo = setInterval(empiezaTiempo,10);
-        }
         function stopTime(){
             clearInterval(tiempo);
         }
-        function empiezaTiempo(){
-            
-            ms++;
-            if(ms>99){
-                ms=0;
-                s++;
-            }
-            if(s>59){
-                s=0;
-                m++;
-            }
-            ctx.fillStyle="rgb(255,255,255)";
-            ctx.fillRect(0,0,700,70);
-            ctx.beginPath();
-            ctx.fillStyle="black";
-            ctx.fillText("time: " +m+":"+s+":"+ms,50,50);
-        }
+
+       
 
         function agregaParedes(){
             //Recuadro 600x600, Paredes principales
